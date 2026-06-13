@@ -25,29 +25,15 @@ const isStrongEnough = (s: PasswordStrength) =>
 
 const Register = () => {
   const navigate = useNavigate();
-  useEffect(() => {
-  const orb = document.querySelector('.orb') as HTMLElement
-  if (!orb) return
-
-  const handleMouseMove = (e: MouseEvent) => {
-    const x = (e.clientX / window.innerWidth - 0.5) * 30
-    const y = (e.clientY / window.innerHeight - 0.5) * 30
-    orb.style.transform = `translateY(-50%) translate(${x}px, ${y}px)`
-  }
-
-  window.addEventListener('mousemove', handleMouseMove)
-  return () => window.removeEventListener('mousemove', handleMouseMove)
-}, [])
+  const orbRef = useRef<HTMLDivElement>(null);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
-
   const [emailDone, setEmailDone] = useState(false);
   const [passwordDone, setPasswordDone] = useState(false);
-
   const [strength, setStrength] = useState<PasswordStrength>({
     hasUpper: false,
     hasLower: false,
@@ -55,7 +41,6 @@ const Register = () => {
     hasSpecial: false,
     isLong: false,
   });
-
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [signal, setSignal] = useState<{
@@ -65,6 +50,53 @@ const Register = () => {
 
   const passwordRef = useRef<HTMLInputElement>(null);
   const confirmRef = useRef<HTMLInputElement>(null);
+
+   useEffect(() => {
+    const orb = orbRef.current;
+    if (!orb) return;
+
+    let currentX = 0;
+    let currentY = 0;
+    let targetX = 0;
+    let targetY = 0;
+    let frameId: number;
+
+    // Handle Mouse Movement
+    const handleMouseMove = (e: MouseEvent) => {
+      targetX = (e.clientX / window.innerWidth - 0.5) * 60;
+      targetY = (e.clientY / window.innerHeight - 0.5) * 60;
+    };
+
+    // Handle Touch Movement (for Tablets)
+    const handleTouchMove = (e: TouchEvent) => {
+      if (e.touches.length > 0) {
+        const touch = e.touches[0];
+        targetX = (touch.clientX / window.innerWidth - 0.5) * 60;
+        targetY = (touch.clientY / window.innerHeight - 0.5) * 60;
+      }
+    };
+
+    const animate = () => {
+      // Smooth interpolation (the 0.05 makes it "floaty")
+      currentX += (targetX - currentX) * 0.05;
+      currentY += (targetY - currentY) * 0.05;
+      
+      // We apply the movement + the spinning is handled in CSS
+      orb.style.transform = `translate(-50%, -50%) translate(${currentX}px, ${currentY}px)`;
+      frameId = requestAnimationFrame(animate);
+    };
+
+    frameId = requestAnimationFrame(animate);
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("touchmove", handleTouchMove);
+
+    return () => {
+      cancelAnimationFrame(frameId);
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("touchmove", handleTouchMove);
+    };
+  }, []);
+
 
   useEffect(() => {
     setStrength(checkStrength(password));
@@ -129,7 +161,7 @@ const Register = () => {
   return (
     <div className="register">
       <div className="stars" />
-      <div className="orb" />
+      <div className="orb" ref={orbRef} />
 
       <div className="register-form">
         <p className="register-transmission">VOID/REG · SIGNAL PENDING</p>
