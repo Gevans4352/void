@@ -1,0 +1,302 @@
+.void-canvas {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  background: var(--abyss);
+  overflow: hidden;
+}
+
+.void-loading {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  background: var(--abyss);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.void-loading p {
+  font-family: "Space Mono", monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  color: var(--muted);
+  animation: blink 2.5s ease-in-out infinite;
+}
+
+/* CONSTELLATION LAYER */
+.constellation-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* FRAGMENTS */
+.fragment {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  max-width: 160px;
+  text-align: center;
+  animation: fragmentDrift 12s ease-in-out infinite;
+  transition: opacity 0.4s ease;
+}
+
+.fragment.ghost {
+  opacity: 0.2;
+  pointer-events: none;
+  filter: blur(0.5px);
+}
+
+.fragment.risen {
+  opacity: 1;
+  filter: drop-shadow(0 0 12px currentColor);
+}
+
+.fragment.pulsing {
+  animation: fragmentPulse 1.5s ease forwards;
+}
+
+.fragment-content {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: clamp(0.65rem, 1.5vw, 0.8rem);
+  line-height: 1.5;
+  letter-spacing: 0.03em;
+  color: inherit;
+}
+
+.fragment-signal {
+  font-family: "Space Mono", monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.1em;
+  color: var(--shadow-text);
+  opacity: 0.6;
+}
+
+@keyframes fragmentDrift {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) translateY(0px);
+  }
+  33% {
+    transform: translate(-50%, -50%) translateY(-6px);
+  }
+  66% {
+    transform: translate(-50%, -50%) translateY(4px);
+  }
+}
+
+@keyframes fragmentPulse {
+  0% {
+    filter: drop-shadow(0 0 0px currentColor);
+  }
+  50% {
+    filter: drop-shadow(0 0 20px currentColor);
+  }
+  100% {
+    filter: drop-shadow(0 0 0px currentColor);
+  }
+}
+
+/* NAV */
+.void-nav {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  z-index: 10;
+  display: flex;
+  gap: 1.5rem;
+}
+
+.void-nav-link {
+  font-family: "Space Mono", monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  color: var(--shadow-text);
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: color 0.3s ease;
+  border-bottom: 1px solid transparent;
+  padding-bottom: 2px;
+}
+
+.void-nav-link:hover {
+  color: var(--muted);
+  border-bottom-color: var(--drift-blue);
+}
+
+/* DROP BUTTON */
+.drop-btn {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: transparent;
+  border: 1px solid var(--shadow-text);
+  color: var(--muted);
+  font-family: "Space Mono", monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  padding: 0.6rem 1.5rem;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.3s ease;
+}
+
+.drop-btn:hover {
+  border-color: var(--signal-blue);
+  color: var(--starlight);
+}
+
+/* DROP OVERLAY */
+.drop-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(5, 6, 10, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+  backdrop-filter: blur(4px);
+}
+
+.drop-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 420px;
+  padding: 2rem;
+  border: 0.5px solid var(--shadow-text);
+  background: rgba(11, 16, 38, 0.9);
+}
+
+.drop-title {
+  font-family: "Playfair Display", serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: 1.2rem;
+  color: var(--starlight);
+  letter-spacing: 0.03em;
+}
+
+.drop-input {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--shadow-text);
+  color: var(--starlight);
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  padding: 0.5rem 0;
+  resize: none;
+  outline: none;
+  min-height: 80px;
+  letter-spacing: 0.03em;
+}
+
+.drop-input::placeholder {
+  color: var(--shadow-text);
+  font-size: 0.8rem;
+}
+
+.drop-input:focus {
+  border-bottom-color: var(--signal-blue);
+}
+
+/* TEMPERATURE */
+.temperature-select {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.temp-btn {
+  background: transparent;
+  border: none;
+  font-family: "Space Mono", monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  padding: 0;
+  opacity: 0.4;
+  transition: opacity 0.3s ease;
+  text-transform: uppercase;
+}
+
+.temp-btn.selected {
+  opacity: 1;
+  border-bottom: 1px solid currentColor;
+  padding-bottom: 2px;
+}
+
+/* DROP ACTIONS */
+.drop-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cancel-btn {
+  background: transparent;
+  border: none;
+  font-family: "Space Mono", monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  color: var(--shadow-text);
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.cancel-btn:hover {
+  color: var(--muted);
+}
+
+.confirm-btn {
+  background: transparent;
+  border-bottom: 1px solid var(--signal-blue);
+  color: var(--signal-blue);
+  font-family: "Space Mono", monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  padding: 0.3rem 0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.confirm-btn:hover {
+  color: var(--starlight);
+  border-bottom-color: var(--starlight);
+}
+
+.confirm-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+  .drop-panel {
+    margin: 1rem;
+    padding: 1.5rem;
+  }
+
+  .void-nav {
+    top: 1rem;
+    right: 1rem;
+  }
+
+  .fragment-content {
+    font-size: 0.7rem;
+  }
+}
