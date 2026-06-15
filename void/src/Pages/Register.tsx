@@ -133,6 +133,7 @@ const Register = () => {
     try {
       const res = await api.post("/auth/register", { email, password });
       localStorage.setItem("void_token", res.data.token);
+      localStorage.setItem("void_signal", res.data.user.signal_name)
       setSignal(res.data.user);
     } catch (err: any) {
       setError(err.response?.data?.error || "something went wrong");
