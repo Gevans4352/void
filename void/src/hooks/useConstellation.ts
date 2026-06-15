@@ -17,7 +17,7 @@ const useConstellation = () => {
     const fetchConstellations = async () => {
       try {
         const res = await api.get("/constellations");
-        setConstellations(res.data.constellations);
+        setConstellations(res.data.constellations || []);
       } catch (err) {
         console.log("constellation fetch failed", err);
       }

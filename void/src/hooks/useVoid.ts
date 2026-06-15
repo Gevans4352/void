@@ -26,7 +26,7 @@ const useVoid = () => {
   const fetchFragments = async () => {
     try {
       const res = await api.get("/fragments");
-      setFragments(res.data.fragments);
+      setFragments(res.data.fragments || []);
     } catch (err: any) {
       setError(err.response?.data?.error || "failed to load void");
     } finally {
