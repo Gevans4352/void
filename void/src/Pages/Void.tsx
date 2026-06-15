@@ -129,14 +129,20 @@ const Void = () => {
         <span
           className="void-nav-link"
           onClick={() => {
-            const token = localStorage.getItem("void_token");
-            if (token) {
-              const payload = JSON.parse(atob(token.split(".")[1]));
-              navigate(`/grove/${payload.signal_name}`);
-            }
+            localStorage.clear();
+            navigate("/login");
           }}
         >
-          my grove
+          Leave
+        </span>
+        <span
+          className="void-nav-link"
+          onClick={() => {
+            const signal = localStorage.getItem("void_signal");
+            if (signal) navigate(`/grove/${signal}`);
+          }}
+        >
+          My grove
         </span>
       </div>
 
