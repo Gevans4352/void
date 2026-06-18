@@ -10,6 +10,7 @@ interface Fragment {
   temperature: "warm" | "cold" | "burning" | "frozen";
   status: "active" | "ghost" | "risen";
   created_at: string;
+  retired_at?: string;
   x: number;
   y: number;
 }
@@ -63,6 +64,7 @@ const Grove = () => {
     const fetchGrove = async () => {
       try {
         const res = await api.get(`/grove/${signal}`);
+        console.log("grove data:", res.data);
         setUser(res.data.user);
         setFragments(res.data.fragments || []);
         setConstellations(res.data.constellations || []);
@@ -75,7 +77,20 @@ const Grove = () => {
 
     fetchGrove();
   }, [signal, navigate]);
-
+  const handleRetire = async (id: string) => {
+    try {
+      await api.patch(`/fragments/${id}`);
+      setFragments((prev) =>
+        prev.map((f) =>
+          f.id === id
+            ? { ...f, status: "ghost", retired_at: new Date().toISOString() }
+            : f,
+        ),
+      );
+    } catch (err) {
+      console.log("retire failed", err);
+    }
+  };
   const activeFragments = fragments.filter(
     (f) => f.status === "active" || f.status === "risen",
   );
@@ -213,6 +228,15 @@ const Grove = () => {
                 style={{ color: temperatureColor[f.temperature] }}
                 onClick={() => setSelectedFragment(f)}
               >
+                <button
+                  className="retire-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleRetire(f.id);
+                  }}
+                >
+                  release
+                </button>
                 <p className="shard-content">{f.content}</p>
                 <div className="shard-meta">
                   <span className="shard-temp">{f.temperature}</span>
