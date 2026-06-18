@@ -2,8 +2,9 @@ const supabase = require("../lib/supabase");
 require("dotenv").config();
 
 const getGrove = async (req, res) => {
-  const { signal } = req.params;
+  // const { signal } = req.params;
 
+  const signal = decodeURIComponent(req.params.signal);
   try {
     const { data: user, error: userError } = await supabase
       .from("users")
@@ -43,10 +44,10 @@ const getGrove = async (req, res) => {
     const { data: constellations, error: constellationsError } = await supabase
       .from("constellations")
       .select(
-        "*, fragment_A:fragment_a_id(content, temperature), fragment_b:fragment_b_id(content, temperature)",
+        "*, fragment_a:fragment_a_id(content, temperature), fragment_b:fragment_b_id(content, temperature)",
       )
       .or(
-        `fragment_A_id.in.(${fragmentIds.join(",")}), fragment_b_id.in(${fragmentIds.join(",")})`,
+        `fragment_a_id.in.(${fragmentIds.join(",")}),fragment_b_id.in.(${fragmentIds.join(",")})`,
       );
 
     if (constellationsError) {
@@ -58,7 +59,7 @@ const getGrove = async (req, res) => {
       constellations,
     });
   } catch (error) {
-    console.log("error");
+    console.log("error", error);
     res.status(500).json({
       error: error.message,
     });
