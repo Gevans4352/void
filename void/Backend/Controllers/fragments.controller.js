@@ -25,7 +25,7 @@ const getFragments = async (req, res) => {
 
 const dropFragment = async (req, res) => {
   const { content, temperature, x, y } = req.body;
-  const user_id = req.user.user_id;
+  const user_id = req.user.id;
 
   if (!content || temperature === undefined) {
     return res.status(400).json({
