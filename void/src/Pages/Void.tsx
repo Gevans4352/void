@@ -4,6 +4,7 @@ import useVoid from "../hooks/useVoid";
 import useConstellation from "../hooks/useConstellation";
 import usePulse from "../hooks/usePulse";
 import "../styles/Void.css";
+import useCarousel from "../hooks/useCarousel";
 
 const temperatureColor: Record<string, string> = {
   warm: "#FFD36E",
@@ -13,6 +14,7 @@ const temperatureColor: Record<string, string> = {
 };
 
 const Void = () => {
+  const { risen } = useCarousel();
   const [authed, setAuthed] = useState(false);
   const navigate = useNavigate();
   const { fragments, loading, error } = useVoid();
@@ -109,21 +111,40 @@ const Void = () => {
         })}
       </svg>
 
-      {fragments.map((f) => (
+      {fragments
+        .filter((f) => f.status !== "risen")
+        .map((f) => (
+          <div
+            key={f.id}
+            className={`fragment ${f.status} ${pulsing === f.id ? "pulsing" : ""}`}
+            style={{
+              left: `${f.x}%`,
+              top: `${f.y}%`,
+              color: temperatureColor[f.temperature],
+            }}
+            onClick={() => pulse(f.id)}
+          >
+            <p className="fragment-content">{f.content}</p>
+            <span className="fragment-signal">{f.users?.signal_name}</span>
+          </div>
+        ))}
+
+      {risen && (
         <div
-          key={f.id}
-          className={`fragment ${f.status} ${pulsing === f.id ? "pulsing" : ""}`}
+          className="fragment risen-carousel"
           style={{
-            left: `${f.x}%`,
-            top: `${f.y}%`,
-            color: temperatureColor[f.temperature],
+            left: `${risen.x}%`,
+            top: `${risen.y}%`,
+            color: temperatureColor[risen.temperature],
           }}
-          onClick={() => pulse(f.id)}
         >
-          <p className="fragment-content">{f.content}</p>
-          <span className="fragment-signal">{f.users?.signal_name}</span>
+          <div className="risen-pulse ring-1" />
+          <div className="risen-pulse ring-2" />
+          <div className="risen-dust" />
+          <p className="fragment-content">{risen.content}</p>
+          <span className="fragment-signal">{risen.users?.signal_name}</span>
         </div>
-      ))}
+      )}
 
       <div className="void-nav">
         <span
