@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import api from "../lib/api";
 import { supabase } from "../lib/supabase";
 
@@ -23,7 +23,7 @@ const useVoid = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const fetchFragments = async () => {
+  const fetchFragments = useCallback(async () => {
     try {
       const res = await api.get("/fragments");
       setFragments(res.data.fragments || []);
@@ -32,7 +32,7 @@ const useVoid = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchFragments();
@@ -43,8 +43,9 @@ const useVoid = () => {
         "postgres_changes",
         { event: "*", schema: "public", table: "fragments" },
         (payload) => {
+          console.log("realtime event:", payload);
           if (payload.eventType === "INSERT") {
-            setFragments((prev) => [payload.new as Fragment, ...prev]);
+            fetchFragments();
           }
           if (payload.eventType === "UPDATE") {
             setFragments((prev) =>
@@ -58,12 +59,14 @@ const useVoid = () => {
           }
         },
       )
-      .subscribe();
+      .subscribe((status) => {
+        console.log("realtime status:", status);
+      });
 
     return () => {
       supabase.removeChannel(channel);
     };
-  }, []);
+  }, [fetchFragments]);
 
   return { fragments, loading, error, refetch: fetchFragments };
 };
